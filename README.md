@@ -1,5 +1,5 @@
 # FastDepth
-@ Requirements
+# Requirements
 Install PyTorch on a machine with a CUDA GPU. Our code was developed on a system running PyTorch v0.4.1.
 Install the HDF5 format libraries. Files in our pre-processed datasets are in HDF5 format.
 sudo apt-get update
