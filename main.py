@@ -185,6 +185,9 @@ def validate(val_loader, model, epoch, write_to_file=True):
     average_meter = AverageMeter()
     model.eval()  # switch to evaluate mode
     end = time.time()
+    eval_file = output_directory + '/evaluation.txt'
+    f = open(eval_file, "w+")
+    f.write("Max_Error  Depth   \r\n")
     for i, (input, target) in enumerate(val_loader):
         input, target = input.cuda(), target.cuda()
         # torch.cuda.synchronize()
@@ -196,6 +199,13 @@ def validate(val_loader, model, epoch, write_to_file=True):
             pred = model(input)
         # torch.cuda.synchronize()
         gpu_time = time.time() - end
+
+        abs_err = (target.data - pred.data).abs().cpu()
+        max_err_ind = np.unravel_index(np.argmax(abs_err, axis=None), abs_err.shape)
+
+        max_err_depth = target.data[max_err_ind]
+        max_err = abs_err[max_err_ind]
+        f.write(f'{max_err}  {max_err_depth}   \r\n')
 
         # measure accuracy and record loss
         result = Result()
@@ -210,9 +220,9 @@ def validate(val_loader, model, epoch, write_to_file=True):
             rgb = input
 
         if i == 0:
-            img_merge = utils.merge_into_row(rgb, target, pred)
+            img_merge = utils.merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
         elif (i < 8 * skip) and (i % skip == 0):
-            row = utils.merge_into_row(rgb, target, pred)
+            row = utils.merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
             img_merge = utils.add_row(img_merge, row)
         elif i == 8 * skip:
             filename = output_directory + '/comparison_' + str(epoch) + '.png'
@@ -227,7 +237,7 @@ def validate(val_loader, model, epoch, write_to_file=True):
                   'REL={result.absrel:.3f}({average.absrel:.3f}) '
                   'Lg10={result.lg10:.3f}({average.lg10:.3f}) '.format(
                 i + 1, len(val_loader), gpu_time=gpu_time, result=result, average=average_meter.average()))
-
+    f.close()
     avg = average_meter.average()
 
     print('\n*\n'
