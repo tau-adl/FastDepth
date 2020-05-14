@@ -17,7 +17,7 @@ Download the preprocessed NYU Depth V2 dataset in HDF5 format and place it under
  wget http://datasets.lids.mit.edu/fastdepth/data/nyudepthv2.tar.gz
  
  tar -xvf nyudepthv2.tar.gz && rm -f nyudepthv2.tar.gz
-
+```
 # Train
 ```
 python3 main.py -train -p 100 --epochs 20
