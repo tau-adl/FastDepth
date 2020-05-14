@@ -18,3 +18,11 @@ Download the preprocessed NYU Depth V2 dataset in HDF5 format and place it under
  
  tar -xvf nyudepthv2.tar.gz && rm -f nyudepthv2.tar.gz
  ```
+# Train
+```
+python3 main.py -train -p 100 --epochs 20
+```
+# Evaluate
+```
+python3 main.py --evaluate /home/usr/results/trained_model.pth.tar
+```
