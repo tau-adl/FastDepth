@@ -9,7 +9,7 @@ sudo apt-get install -y libhdf5-serial-dev hdf5-tools
 
 pip3 install h5py matplotlib imageio scikit-image opencv-python
 ```
-
+# NYU database
 Download the preprocessed NYU Depth V2 dataset in HDF5 format and place it under a data folder outside the repo directory. The NYU dataset requires 32G of storage space.
  ```
  mkdir data; cd data
@@ -17,7 +17,7 @@ Download the preprocessed NYU Depth V2 dataset in HDF5 format and place it under
  wget http://datasets.lids.mit.edu/fastdepth/data/nyudepthv2.tar.gz
  
  tar -xvf nyudepthv2.tar.gz && rm -f nyudepthv2.tar.gz
- ```
+
 # Train
 ```
 python3 main.py -train -p 100 --epochs 20
