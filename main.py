@@ -34,34 +34,21 @@ best_result.set_to_worst()
 def create_data_loaders(args):
     # Data loading code
     print("=> creating data loaders ...")
-    # traindir = os.path.join('data', args.data, 'train')
-    # valdir = os.path.join('data', args.data, 'val')
     home_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     traindir = os.path.join(home_path, 'data', args.data, 'train')
     valdir = os.path.join(home_path, 'data', args.data, 'val')
 
     train_loader = None
-    val_loader = None
 
-    # sparsifier is a class for generating random sparse depth input from the ground truth
-    sparsifier = None
     max_depth = args.max_depth if args.max_depth >= 0.0 else np.inf
-    if args.sparsifier == UniformSampling.name:
-        sparsifier = UniformSampling(num_samples=args.num_samples, max_depth=max_depth)
-    elif args.sparsifier == SimulatedStereo.name:
-        sparsifier = SimulatedStereo(num_samples=args.num_samples, max_depth=max_depth)
 
     if args.data == 'nyudepthv2':
         from dataloaders.nyu import NYUDataset
         if not args.evaluate:
-            # train_dataset = NYUDataset(traindir, split='train', modality=args.modality, sparsifier=sparsifier)
             train_dataset = NYUDataset(traindir, split='train', modality=args.modality)
-        # val_dataset = NYUDataset(valdir, split='val',modality=args.modality, sparsifier=sparsifier)
-
         val_dataset = NYUDataset(valdir, split='val', modality=args.modality)
     else:
-        raise RuntimeError('Dataset not found.' +
-                           'The dataset must be either of nyudepthv2 or kitti.')
+        raise RuntimeError('Dataset not found.' + 'The dataset must be either of nyudepthv2 or kitti.')
 
     # set batch size to be 1 for validation
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=args.workers,
@@ -185,9 +172,9 @@ def validate(val_loader, model, epoch, write_to_file=True):
     average_meter = AverageMeter()
     model.eval()  # switch to evaluate mode
     end = time.time()
-    eval_file = output_directory + '/evaluation.txt'
+    eval_file = output_directory + '/evaluation.csv'
     f = open(eval_file, "w+")
-    f.write("Max_Error  Depth   \r\n")
+    f.write("Max_Error,Depth,RMSE,GPU_TIME,Number_Of_Frame\r\n")
     for i, (input, target) in enumerate(val_loader):
         input, target = input.cuda(), target.cuda()
         # torch.cuda.synchronize()
@@ -205,14 +192,15 @@ def validate(val_loader, model, epoch, write_to_file=True):
 
         max_err_depth = target.data[max_err_ind]
         max_err = abs_err[max_err_ind]
-        f.write(f'{max_err}  {max_err_depth}   \r\n')
+        
 
         # measure accuracy and record loss
         result = Result()
         result.evaluate(pred.data, target.data)
         average_meter.update(result, gpu_time, data_time, input.size(0))
         end = time.time()
-
+        
+        f.write(f'{max_err},{max_err_depth},{result.rmse:.2f},{gpu_time},{i+1}\r\n')
         # save 8 images for visualization
         skip = 50
 
