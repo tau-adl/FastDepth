@@ -7,6 +7,7 @@ import torch
 import torch.backends.cudnn as cudnn
 import torch.nn.parallel
 import torch.optim
+from Data import *
 
 import criteria
 
@@ -14,8 +15,8 @@ cudnn.benchmark = True
 
 import models
 from metrics import AverageMeter, Result
-import utils
-from dataloaders.dense_to_sparse import UniformSampling, SimulatedStereo
+import utils import *
+
 
 args = utils.parse_command()
 print(args)
@@ -43,10 +44,9 @@ def create_data_loaders(args):
     max_depth = args.max_depth if args.max_depth >= 0.0 else np.inf
 
     if args.data == 'nyudepthv2':
-        from dataloaders.nyu import NYUDataset
         if not args.evaluate:
-            train_dataset = NYUDataset(traindir, split='train', modality=args.modality)
-        val_dataset = NYUDataset(valdir, split='val', modality=args.modality)
+            train_dataset = NYU(traindir, split='train', modality=args.modality)
+        val_dataset = NYU(valdir, split='val', modality=args.modality)
     else:
         raise RuntimeError('Dataset not found.' + 'The dataset must be either of nyudepthv2 or kitti.')
 
@@ -78,8 +78,7 @@ def main():
         valdir = os.path.join('..', 'data', args.data, 'val')
 
         if args.data == 'nyudepthv2':
-            from dataloaders.nyu import NYUDataset
-            val_dataset = NYUDataset(valdir, split='val', modality=args.modality)
+            val_dataset = NYU(valdir, split='val', modality=args.modality)
         else:
             raise RuntimeError('Dataset not found.')
 
@@ -192,14 +191,14 @@ def validate(val_loader, model, epoch, write_to_file=True):
 
         max_err_depth = target.data[max_err_ind]
         max_err = abs_err[max_err_ind]
-        
+
 
         # measure accuracy and record loss
         result = Result()
         result.evaluate(pred.data, target.data)
         average_meter.update(result, gpu_time, data_time, input.size(0))
         end = time.time()
-        
+
         f.write(f'{max_err},{max_err_depth},{result.rmse:.2f},{gpu_time},{i+1}\r\n')
         # save 8 images for visualization
         skip = 50
