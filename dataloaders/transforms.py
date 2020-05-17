@@ -335,8 +335,13 @@ class Resize(object):
         """
         if img.ndim == 3:
             return misc.imresize(img, self.size, self.interpolation)
+
+            # return np.array(Image.fromarray(img.astype(np.uint8)).resize(self.size))
+
         elif img.ndim == 2:
             return misc.imresize(img, self.size, self.interpolation, 'F')
+            # return np.array(Image.fromarray(img).resize(self.size))
+
         else:
             RuntimeError('img should be ndarray with 2 or 3 dimensions. Got {}'.format(img.ndim))
 

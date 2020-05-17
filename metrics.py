@@ -34,7 +34,7 @@ class Result(object):
         output = 1e3 * output[valid_mask]
         target = 1e3 * target[valid_mask]
         abs_diff = (output - target).abs()
-        #print((target-output).abs())
+
         self.mse = float((torch.pow(abs_diff, 2)).mean())
         self.rmse = math.sqrt(self.mse)
         self.mae = float(abs_diff.mean())
