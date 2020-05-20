@@ -41,6 +41,6 @@ python3 main.py -train -p 100 --epochs 20
 python3 main.py --evaluate /home/usr/results/trained_model.pth.tar
 ```
 ## Authors
-* **Sunny Yehuda*** - *sunnyyehuda@gmail.com*
-* **Gil Rafalovich*** - *rafalovichg@gmail.com*
+* **Sunny Yehuda** - *sunnyyehuda@gmail.com*
+* **Gil Rafalovich** - *rafalovichg@gmail.com*
 * **David Sriker** - *David.Sriker@gmail.com*

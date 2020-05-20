@@ -7,7 +7,7 @@ unzip_from_link() {
   echo "Downloading Data"
   curl -L -o "${dir}/tmp.tar.gz" ${link}
   echo "unziping..."
-  tar -xvf tmp.tar.gz
+  tar -xvf "${dir}/tmp.tar.gz" -C "${dir}/"
   $(rm "${dir}/tmp.tar.gz")
 }
 
