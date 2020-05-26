@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import math
-from Data import CustomDataloader
+from Data import CustomDataLoader
 import cv2
 
 
@@ -105,7 +105,7 @@ def parse_command():
 
     model_names = ['resnet18', 'resnet50']
     loss_names = ['l1', 'l2']
-    from dataloaders.dense_to_sparse import UniformSampling, SimulatedStereo
+    # from dataloaders.dense_to_sparse import UniformSampling, SimulatedStereo
     sparsifier_names = [x.name for x in [UniformSampling, SimulatedStereo]]
     from models import Decoder
     decoder_names = Decoder.names
@@ -114,7 +114,7 @@ def parse_command():
 
     ################
     data_names = ['nyudepthv2']
-    modality_names = CustomDataloader.modality_names
+    modality_names = CustomDataLoader.modality_names
 
     import argparse
     parser = argparse.ArgumentParser(description='FastDepth')

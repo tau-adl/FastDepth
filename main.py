@@ -15,10 +15,10 @@ cudnn.benchmark = True
 
 import models
 from metrics import AverageMeter, Result
-import utils import *
+from utils import *
 
 
-args = utils.parse_command()
+args = parse_command()
 print(args)
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu  # Set the GPU.
 
@@ -35,7 +35,7 @@ best_result.set_to_worst()
 def create_data_loaders(args):
     # Data loading code
     print("=> creating data loaders ...")
-    home_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    home_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
     traindir = os.path.join(home_path, 'data', args.data, 'train')
     valdir = os.path.join(home_path, 'data', args.data, 'val')
 
