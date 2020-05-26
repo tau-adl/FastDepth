@@ -122,7 +122,7 @@ def main():
         criterion = criteria.MaskedL1Loss().cuda()
 
         # create results folder, if not already exists
-    output_directory = utils.get_output_directory(args)
+    output_directory = get_output_directory(args)
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     train_csv = os.path.join(output_directory, 'train.csv')
@@ -139,7 +139,7 @@ def main():
             writer.writeheader()
 
         for epoch in range(start_epoch, args.epochs):
-            utils.adjust_learning_rate(optimizer, epoch, args.lr)
+            adjust_learning_rate(optimizer, epoch, args.lr)
             train(train_loader, model, criterion, optimizer, epoch)  # train for one epoch
             result, img_merge = validate(val_loader, model, epoch)  # evaluate on validation set
 
@@ -155,7 +155,7 @@ def main():
                                    result.gpu_time))
                 if img_merge is not None:
                     img_filename = output_directory + '/comparison_best.png'
-                    utils.save_image(img_merge, img_filename)
+                    save_image(img_merge, img_filename)
 
             utils.save_checkpoint({
                 'args': args,
@@ -207,9 +207,9 @@ def validate(val_loader, model, epoch, write_to_file=True):
             rgb = input
 
         if i == 0:
-            img_merge = utils.merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
+            img_merge = merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
         elif (i < 8 * skip) and (i % skip == 0):
-            row = utils.merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
+            row = merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
             img_merge = utils.add_row(img_merge, row)
         elif i == 8 * skip:
             filename = output_directory + '/comparison_' + str(epoch) + '.png'
