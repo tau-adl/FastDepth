@@ -38,7 +38,6 @@ def create_data_loaders(args):
     home_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
     traindir = os.path.join(home_path, 'data', args.data, 'train')
     valdir = os.path.join(home_path, 'data', args.data, 'val')
-
     train_loader = None
 
     max_depth = args.max_depth if args.max_depth >= 0.0 else np.inf
@@ -75,7 +74,8 @@ def main():
 
         # Data loading code
         print("=> creating data loaders...")
-        valdir = os.path.join('..', 'data', args.data, 'val')
+        home_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        valdir = os.path.join(home_path, 'data', args.data, 'val')
 
         if args.data == 'nyudepthv2':
             val_dataset = NYU(valdir, split='val', modality=args.modality)
@@ -99,7 +99,7 @@ def main():
         else:
             model = checkpoint
             args.start_epoch = 0
-        output_directory = os.path.dirname(args.evaluate)
+        output_directory = os.path.dirname('/home/jetson/FastDepth')
         validate(val_loader, model, args.start_epoch, write_to_file=False)
         return
 
@@ -157,7 +157,7 @@ def main():
                     img_filename = output_directory + '/comparison_best.png'
                     save_image(img_merge, img_filename)
 
-            utils.save_checkpoint({
+            save_checkpoint({
                 'args': args,
                 'epoch': epoch,
                 'arch': args.arch,
@@ -171,7 +171,7 @@ def validate(val_loader, model, epoch, write_to_file=True):
     average_meter = AverageMeter()
     model.eval()  # switch to evaluate mode
     end = time.time()
-    eval_file = output_directory + '/evaluation.csv'
+    eval_file = output_directory + '/FastDepth/evaluation.csv'
     f = open(eval_file, "w+")
     f.write("Max_Error,Depth,RMSE,GPU_TIME,Number_Of_Frame\r\n")
     for i, (input, target) in enumerate(val_loader):
@@ -210,10 +210,10 @@ def validate(val_loader, model, epoch, write_to_file=True):
             img_merge = merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
         elif (i < 8 * skip) and (i % skip == 0):
             row = merge_into_row_with_gt(rgb, target, pred, (target - pred).abs())
-            img_merge = utils.add_row(img_merge, row)
+            img_merge = add_row(img_merge, row)
         elif i == 8 * skip:
             filename = output_directory + '/comparison_' + str(epoch) + '.png'
-            utils.save_image(img_merge, filename)
+            save_image(img_merge, filename)
 
         if (i + 1) % args.print_freq == 0:
             print('Test: [{0}/{1}]\t'

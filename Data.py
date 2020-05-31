@@ -22,9 +22,9 @@ def h5Loader(path):
 class CustomDataLoader(data.Dataset):
     modality_names = ['rgb']
 
-    # def isImageFile(self, filename):
-    #     IMG_EXTENSIONS = ['.h5']
-    #     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
+    def isImageFile(self, filename):
+        IMG_EXTENSIONS = ['.h5']
+        return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
     def findClasses(self, dir):
         classes = [d for d in os.listdir(dir) if os.path.isdir(os.path.join(dir, d))]
@@ -34,6 +34,7 @@ class CustomDataLoader(data.Dataset):
 
     def makeDataset(self, dir, class_to_idx):
         images = []
+        print(dir)
         dir = os.path.expanduser(dir)
         for target in sorted(os.listdir(dir)):
             d = os.path.join(dir, target)
