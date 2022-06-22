@@ -23,7 +23,7 @@ lief==0.9.0
 MarkupSafe==1.1.1
 matplotlib==3.2.1
 networkx==2.4
-numpy==1.16.5
+numpy==1.22.0
 olefile==0.46
 pandas==1.0.3
 parso==0.5.1
