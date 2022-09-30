@@ -16,7 +16,7 @@ ipython==7.8.0
 ipython-genutils==0.2.0
 jedi==0.15.1
 Jinja2==2.10.1
-joblib==0.14.1
+joblib==1.2.0
 kiwisolver==1.2.0
 libarchive-c==2.8
 lief==0.9.0
